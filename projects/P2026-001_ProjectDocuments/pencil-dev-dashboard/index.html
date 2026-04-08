@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard MADHORSE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0F3460;
+      --bg-card: #16213E;
+      --bg-header: #1A1A2E;
+      --accent: #E94560;
+      --success: #00B894;
+      --error: #FF6B6B;
+      --text-primary: #FFFFFF;
+      --text-muted: #A8A8B3;
+      --success-bg: #0D3B2E;
+      --error-bg: #4A1D1D;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+    
+    /* Layout */
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: var(--bg-header);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: fixed;
+      top: 64px;
+      left: 0;
+      height: calc(100vh - 64px);
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .nav-item.active {
+      background: var(--accent);
+      color: var(--text-primary);
+    }
+    
+    .nav-item:hover:not(.active) {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    /* Header */
+    .header {
+      height: 64px;
+      background: var(--bg-header);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 24px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+    
+    .logo {
+      background: var(--accent);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .header-nav {
+      display: flex;
+      gap: 24px;
+      font-size: 14px;
+    }
+    
+    .header-nav span {
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    
+    .header-nav span:first-of-type {
+      color: var(--text-primary);
+    }
+    
+    .header-spacer {
+      flex: 1;
+    }
+    
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    
+    /* Main Content */
+    .main-content {
+      margin-left: 240px;
+      margin-top: 64px;
+      padding: 24px;
+      flex: 1;
+    }
+    
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .stat-badge {
+      display: inline-flex;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      width: fit-content;
+    }
+    
+    .stat-badge.positive {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+    
+    .stat-badge.negative {
+      background: var(--error-bg);
+      color: var(--error);
+    }
+    
+    /* Chart Section */
+    .chart-section {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    
+    .chart-placeholder {
+      background: var(--bg-header);
+      border-radius: 8px;
+      height: 220px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+    
+    .chart-bar {
+      width: 60px;
+      background: var(--accent);
+      border-radius: 4px;
+    }
+    
+    /* Table Section */
+    .table-section {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .table-header {
+      display: grid;
+      grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr;
+      gap: 16px;
+      padding: 0 16px;
+      margin-bottom: 8px;
+    }
+    
+    .table-header span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    
+    .table-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr;
+      gap: 16px;
+      padding: 12px 16px;
+      align-items: center;
+    }
+    
+    .table-row span {
+      font-size: 13px;
+    }
+    
+    .table-row .muted {
+      color: var(--text-muted);
+    }
+    
+    .status-badge {
+      display: inline-flex;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      width: fit-content;
+    }
+    
+    .status-badge.completed {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+    
+    .status-badge.pending {
+      background: var(--error-bg);
+      color: var(--error);
+    }
+    
+    /* Buttons */
+    .btn-section {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: var(--text-primary);
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(233, 69, 96, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">MADHORSE</div>
+    <nav class="header-nav">
+      <span>Dashboard</span>
+      <span>Analytics</span>
+      <span>Orders</span>
+      <span>Settings</span>
+    </nav>
+    <div class="header-spacer"></div>
+    <div class="avatar"></div>
+  </header>
+  
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="nav-item active">Dashboard</div>
+      <div class="nav-item">Analytics</div>
+      <div class="nav-item">Orders</div>
+      <div class="nav-item">Customers</div>
+      <div class="nav-item">Revenue</div>
+      <div class="nav-item">Settings</div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Stats Row -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-label">Total Revenue</span>
+          <span class="stat-value">$124,580</span>
+          <span class="stat-badge positive">+12.5%</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Total Orders</span>
+          <span class="stat-value">1,284</span>
+          <span class="stat-badge positive">+8.2%</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Active Users</span>
+          <span class="stat-value">3,542</span>
+          <span class="stat-badge negative">-3.1%</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Conversion</span>
+          <span class="stat-value">4.8%</span>
+          <span class="stat-badge positive">+2.4%</span>
+        </div>
+      </div>
+      
+      <!-- Chart Section -->
+      <div class="chart-section">
+        <h3 class="section-title">Revenue Overview</h3>
+        <div class="chart-placeholder">
+          <div class="chart-bar" style="height: 80px;"></div>
+          <div class="chart-bar" style="height: 120px;"></div>
+          <div class="chart-bar" style="height: 100px;"></div>
+          <div class="chart-bar" style="height: 160px;"></div>
+          <div class="chart-bar" style="height: 140px;"></div>
+        </div>
+      </div>
+      
+      <!-- Table Section -->
+      <div class="table-section">
+        <h3 class="section-title">Recent Orders</h3>
+        <div class="table-header">
+          <span>Order ID</span>
+          <span>Customer</span>
+          <span>Amount</span>
+          <span>Status</span>
+          <span>Date</span>
+        </div>
+        <div class="table-row">
+          <span>#ORD-2024-001</span>
+          <span>John Smith</span>
+          <span>$1,250.00</span>
+          <span><span class="status-badge completed">Completed</span></span>
+          <span class="muted">2024-03-15</span>
+        </div>
+        <div class="table-row">
+          <span>#ORD-2024-002</span>
+          <span>Sarah Chen</span>
+          <span>$890.00</span>
+          <span><span class="status-badge completed">Completed</span></span>
+          <span class="muted">2024-03-14</span>
+        </div>
+        <div class="table-row">
+          <span>#ORD-2024-003</span>
+          <span>Mike Wong</span>
+          <span>$2,100.00</span>
+          <span><span class="status-badge pending">Pending</span></span>
+          <span class="muted">2024-03-13</span>
+        </div>
+      </div>
+      
+      <!-- Buttons -->
+      <div class="btn-section">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-secondary">Secondary</button>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

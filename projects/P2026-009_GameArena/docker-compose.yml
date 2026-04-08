@@ -1,0 +1,12 @@
+services:
+  game-arena:
+    build: .
+    ports:
+      - "8090:3000"
+      - "8091:3001"
+    environment:
+      - NODE_ENV=production
+      - WS_PORT=3001
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: 1.0

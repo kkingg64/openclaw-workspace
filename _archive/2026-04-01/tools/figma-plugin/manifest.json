@@ -1,0 +1,9 @@
+{
+  "name": "MADHORSE Design System Generator",
+  "id": "madhorse-design-system-001",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page"
+}
+

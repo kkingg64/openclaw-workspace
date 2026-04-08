@@ -1,0 +1,184 @@
+{
+  "mr_number": 2,
+  "project_id": "P2026-008",
+  "project_name": "MADHORSE HQ",
+  "gate": "Phase 4.5 → Phase 5 (UAT)",
+  "review_date": "2026-04-04",
+  "reviewer": "CISO",
+  "reviewers_invoked": ["GPT-4.1 (Security)", "Gemini 2.5 Flash (Spec Compliance)", "Claude (Code Quality)"],
+  "protocol_version": "11.6",
+  "scoring_formula": "((Dim1+Dim2+Dim3)/30)×100",
+  "minimum_pass_score": 90,
+  "results": [
+    {
+      "model": "GPT-4.1",
+      "timestamp": "2026-04-04 03:55 UTC",
+      "reviewer": "CISO",
+      "score": 85,
+      "dimension_scores": {
+        "security": { "raw": 8 },
+        "spec_compliance": { "raw": 9 },
+        "code_quality": { "raw": 8 }
+      },
+      "findings": [
+        {
+          "dimension": "security",
+          "issue": "Hardcoded AUTH_SECRET='madhorse-dev-secret-change-in-production' in .env — A02 Cryptographic Failures",
+          "severity": "critical",
+          "recommendation": "Replace AUTH_SECRET with openssl rand -base64 32. Load via environment variable at runtime, never commit."
+        },
+        {
+          "dimension": "security",
+          "issue": "app/api/auth/[...nextauth]/route.ts contains interleaved exports from middleware.ts and auth.ts — file appears corrupted",
+          "severity": "critical",
+          "recommendation": "Auth route must ONLY contain NextAuth handler import. Separate middleware.ts and lib/auth.ts concerns."
+        },
+        {
+          "dimension": "security",
+          "issue": "No security headers in next.config.ts — CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy missing (A05)",
+          "severity": "important",
+          "recommendation": "Add securityHeaders to next.config.ts per Technical Spec §7.3"
+        },
+        {
+          "dimension": "security",
+          "issue": "/api/system exposes env and uptime in JSON response — information disclosure",
+          "severity": "important",
+          "recommendation": "Remove env/uptime from /api/system response"
+        },
+        {
+          "dimension": "security",
+          "issue": "No Zod input validation infrastructure on API routes",
+          "severity": "minor",
+          "recommendation": "Add Zod schemas for API inputs even if currently unused"
+        }
+      ],
+      "recommendation": "BORDERLINE"
+    },
+    {
+      "model": "Gemini 2.5",
+      "timestamp": "2026-04-04 03:55 UTC",
+      "reviewer": "CISO",
+      "score": 67,
+      "dimension_scores": {
+        "security": { "raw": 7 },
+        "spec_compliance": { "raw": 5 },
+        "code_quality": { "raw": 8 }
+      },
+      "findings": [
+        {
+          "dimension": "spec_compliance",
+          "issue": "/api/trends endpoint MISSING — no app/api/trends/route.ts found",
+          "severity": "critical",
+          "recommendation": "Create app/api/trends/route.ts with GET handler per Technical Spec §6"
+        },
+        {
+          "dimension": "spec_compliance",
+          "issue": "Zod validation NOT FOUND in codebase — CISO_SAFE §3.2 violation",
+          "severity": "critical",
+          "recommendation": "Add Zod schemas for all API route inputs per CISO_SAFE requirements"
+        },
+        {
+          "dimension": "spec_compliance",
+          "issue": "Security headers missing from application layer",
+          "severity": "important",
+          "recommendation": "Add securityHeaders to next.config.ts"
+        },
+        {
+          "dimension": "spec_compliance",
+          "issue": "Discussions page exists but not in MVP scope (4 pages spec vs 5 deployed)",
+          "severity": "important",
+          "recommendation": "Document /discussions as Phase 3.1+ enhancement or remove"
+        },
+        {
+          "dimension": "spec_compliance",
+          "issue": "shadcn version mismatch — spec says v0.3.0, package.json shows v4.1.2",
+          "severity": "important",
+          "recommendation": "Update Technical Spec to reflect shadcn/ui v1.x or downgrade"
+        },
+        {
+          "dimension": "spec_compliance",
+          "issue": "Extra pages beyond MVP: /projects/*, /settings, /search, /threads not in spec",
+          "severity": "minor",
+          "recommendation": "Document as Phase 3.1+ or remove if not approved"
+        }
+      ],
+      "recommendation": "FAIL"
+    },
+    {
+      "model": "Claude",
+      "timestamp": "2026-04-04 03:55 UTC",
+      "reviewer": "CISO",
+      "score": 87,
+      "dimension_scores": {
+        "security": { "raw": 9 },
+        "spec_compliance": { "raw": 9 },
+        "code_quality": { "raw": 8 }
+      },
+      "findings": [
+        {
+          "dimension": "code_quality",
+          "issue": "5 instances of `any` type bypass TypeScript safety: auth.ts:15 (PrismaAdapter), openclaw.ts:32 (messages), openclaw.ts:64,82 (session maps), app/api/system/route.ts:42 (activity map)",
+          "severity": "important",
+          "recommendation": "Replace `any` with proper typed interfaces matching Gateway API response shapes"
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "auth.ts uses `as any` cast for PrismaAdapter — bypasses NextAuth type contract",
+          "severity": "minor",
+          "recommendation": "Use typed db reference or @ts-expect-error if type mismatch confirmed safe"
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "use-system hook not reviewed — critical dependency of SystemMonitor",
+          "severity": "minor",
+          "recommendation": "Ensure use-system hook has proper error handling and TypeScript types"
+        }
+      ],
+      "recommendation": "BORDERLINE"
+    }
+  ],
+  "gate_verdict": "BLOCKED",
+  "summary": {
+    "gpt41_score": 85,
+    "gemini_score": 67,
+    "claude_score": 87,
+    "average_score": 79.67,
+    "pass_count": 0,
+    "borderline_count": 2,
+    "fail_count": 1
+  },
+  "blocking_issues": [
+    {
+      "model": "Gemini 2.5",
+      "issue": "/api/trends endpoint MISSING",
+      "severity": "critical",
+      "must_fix": true
+    },
+    {
+      "model": "Gemini 2.5",
+      "issue": "Zod validation NOT FOUND in codebase",
+      "severity": "critical",
+      "must_fix": true
+    },
+    {
+      "model": "GPT-4.1",
+      "issue": "Hardcoded AUTH_SECRET in .env",
+      "severity": "critical",
+      "must_fix": true
+    },
+    {
+      "model": "GPT-4.1",
+      "issue": "Auth route file corrupted/incorrectly concatenated",
+      "severity": "critical",
+      "must_fix": true
+    }
+  ],
+  "ciso_safe_to_deploy": false,
+  "ciso_rationale": null,
+  "next_steps": [
+    "CTO must fix all 4 critical issues identified",
+    "Re-run MR-2 after fixes applied",
+    "All 3 models must score ≥90 to pass gate"
+  ],
+  "signature": "FABIO_CISO_SIGNED_2026-04-04_0358_UTC"
+}

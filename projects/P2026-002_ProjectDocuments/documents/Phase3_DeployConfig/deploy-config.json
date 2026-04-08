@@ -1,0 +1,49 @@
+{
+  "project": "P2026-002_MealPlanner",
+  "version": "1.0.0",
+  "deployment": {
+    "platform": "Hostinger VPS",
+    "method": "Docker Compose",
+    "network": "app-network",
+    "domain": "meal.marhorse.cloud"
+  },
+  "container": {
+    "image": "node:22-alpine",
+    "container_name": "meal-planner",
+    "working_dir": "/app",
+    "ports": ["3000:3000"],
+    "volumes": ["/var/www/meal-planner:/app"],
+    "env_file": "/var/www/meal-planner/.env",
+    "command": "sh -c \"npm install && npm run build && npm start\"",
+    "restart_policy": "unless-stopped"
+  },
+  "environment_variables": {
+    "required": [
+      "MINIMAX_API_KEY",
+      "MINIMAX_API_BASE"
+    ],
+    "optional": [
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_KEY"
+    ]
+  },
+  "health_check": {
+    "endpoint": "http://localhost:3000",
+    "interval": "30s",
+    "timeout": "10s",
+    "retries": 3
+  },
+  "backup": {
+    "enabled": false,
+    "schedule": null,
+    "location": null
+  },
+  "logs": {
+    "driver": "json-file",
+    "max_size": "10m",
+    "max_files": 3
+  },
+  "last_updated": "2026-03-08T04:30:00Z",
+  "deployed_by": "CTO",
+  "status": "DEPLOYED"
+}

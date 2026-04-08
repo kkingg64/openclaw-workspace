@@ -1,0 +1,25 @@
+{
+  "projectId": "{PROJECT_ID}",
+  "name": "{PROJECT_NAME}",
+  "codeName": "{CODE_NAME}",
+  "phase": "0",
+  "status": "REGISTERED",
+  "owner": "CEO",
+  "codePath": "projects/{PROJECT_ID}_{CODE_NAME}",
+  "docsPath": "projects/{PROJECT_ID}_ProjectDocuments",
+  "deployTargets": [
+    {
+      "type": "tbd",
+      "state": "planned",
+      "publicUrl": null,
+      "internalUrl": null
+    }
+  ],
+  "stack": [],
+  "okrs": [],
+  "currentGate": "[BOSS_APPROVED]",
+  "createdAt": "YYYY-MM-DD HH:MM HKT",
+  "updatedAt": "YYYY-MM-DD HH:MM HKT",
+  "lastVerifiedAt": null,
+  "notes": []
+}

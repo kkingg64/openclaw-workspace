@@ -1,0 +1,82 @@
+{
+  "id": "p005",
+  "name": "P005 WhatsApp AI",
+  "nodes": [
+    {
+      "id": "wh",
+      "name": "WhatsApp Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp",
+        "responseMode": "lastNode"
+      },
+      "webhookId": "p005-whatsapp"
+    },
+    {
+      "id": "extract",
+      "name": "Extract Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 300],
+      "parameters": {
+        "jsCode": "const b=$input.item.json;let p=\"\",m=\"\";try{const c=b.entry?.[0]?.changes?.[0]?.value?.messages?.[0];if(c){p=c.from||\"\";m=c.text?.body||c.image?.caption||\"[不支持的消息]\";}}catch(e){}return{phone:p,message:m};"
+      }
+    },
+    {
+      "id": "ai",
+      "name": "Call AI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 300],
+      "parameters": {
+        "url": "http://fabio-orchestrator:18789/v1/chat/completions",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{"name": "Content-Type", "value": "application/json"}]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "model", "value": "MiniMax-M2.5"},
+            {"name": "messages", "value": "=[{\"role\":\"system\",\"content\":\"你係Amway AI助手，請用廣東話回覆用戶問題：\"},{\"role\":\"user\",\"content\":$json.message}]"},
+            {"name": "max_tokens", "value": 200}
+          ]
+        },
+        "options": {"timeout": 30000}
+      }
+    },
+    {
+      "id": "format",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300],
+      "parameters": {
+        "jsCode": "const r=$input.item.json?.choices?.[0]?.message?.content||\"抱歉，請稍後再試。\";return{body:r};"
+      }
+    },
+    {
+      "id": "resp",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify($json)}}"
+      }
+    }
+  ],
+  "connections": {
+    "wh": {"main": [[{"node": "extract", "type": "main", "index": 0}]]},
+    "extract": {"main": [[{"node": "ai", "type": "main", "index": 0}]]},
+    "ai": {"main": [[{"node": "format", "type": "main", "index": 0}]]},
+    "format": {"main": [[{"node": "resp", "type": "main", "index": 0}]]}
+  },
+  "active": true,
+  "settings": {}
+}

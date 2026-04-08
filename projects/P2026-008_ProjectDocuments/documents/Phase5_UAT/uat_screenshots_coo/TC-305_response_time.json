@@ -1,0 +1,1 @@
+{"testResults":[{"endpoint":"/login","time_ms":12,"threshold_ms":2000,"pass":true},{"endpoint":"/api/auth/providers","time_ms":13,"threshold_ms":2000,"pass":true},{"endpoint":"/api/auth/csrf","time_ms":12,"threshold_ms":2000,"pass":true}],"timestamp":"2026-04-04T14:13:00Z"}

@@ -1,0 +1,222 @@
+{
+  "mr_number": 2,
+  "mr_revision": 2,
+  "project_id": "P2026-008",
+  "project_name": "MADHORSE HQ",
+  "gate": "Phase 4.5 → Phase 5 (UAT)",
+  "review_date": "2026-04-04",
+  "reviewer": "CISO",
+  "reviewers_invoked": ["GPT-4.1 (Security)", "Gemini 2.5 Flash (Spec Compliance)", "Claude (Code Quality)"],
+  "protocol_version": "11.6",
+  "scoring_formula": "((Dim1+Dim2+Dim3)/30)×100",
+  "minimum_pass_score": 90,
+  "results": [
+    {
+      "model": "GPT-4.1",
+      "timestamp": "2026-04-04 04:08 UTC",
+      "reviewer": "CISO",
+      "score": 90,
+      "dimension_scores": {
+        "security": { "raw": 9 },
+        "spec_compliance": { "raw": 9 },
+        "code_quality": { "raw": 9 }
+      },
+      "findings": [
+        {
+          "dimension": "security",
+          "issue": "app/api/system/route.ts discloses process.uptime() and NODE_ENV in GET response",
+          "severity": "minor",
+          "recommendation": "Remove system.uptime and system.env from response, or restrict to higher privilege role."
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "app/api/threads/route.ts and app/api/agents/route.ts lack Zod input validation schemas",
+          "severity": "minor",
+          "recommendation": "Add Zod query schemas for consistency with other API routes."
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "app/api/search/route.ts uses manual validation instead of Zod schema",
+          "severity": "minor",
+          "recommendation": "Consider standardizing to SearchQuerySchema.safeParse for consistency."
+        }
+      ],
+      "recommendation": "PASS",
+      "blocked_issues_fixed": [
+        "AUTH_SECRET was hardcoded as 'madhorse-dev-secret' in .env — now uses proper generated secret",
+        "app/api/auth/[...nextauth]/route.ts contained extra non-NextAuth exports — now clean (only GET/POST handler)"
+      ],
+      "new_issues": []
+    },
+    {
+      "model": "Claude",
+      "timestamp": "2026-04-04 04:09 UTC",
+      "reviewer": "CISO",
+      "score": 83,
+      "dimension_scores": {
+        "security": { "raw": 8 },
+        "spec_compliance": { "raw": 10 },
+        "code_quality": { "raw": 7 }
+      },
+      "findings": [
+        {
+          "dimension": "security",
+          "issue": "lib/auth.ts: PrismaAdapter(db) cast to `any` — defeats TypeScript type safety and could mask adapter/Prisma version incompatibilities at runtime",
+          "severity": "critical",
+          "recommendation": "Use proper typing: either `PrismaAdapter(db) as Adapter` or define a compatible Adapter interface. Check @auth/prisma-adapter version matches Prisma."
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "research/route.ts: `session: any` and projects/route.ts: `session: any` — session objects typed as `any` leak through multiple route handlers",
+          "severity": "important",
+          "recommendation": "Define a SessionUser type and use it consistently"
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "research/route.ts: `Map<string, { ts: number; data: any }>` — cache data typed as `any`",
+          "severity": "important",
+          "recommendation": "Define a proper cached search result type instead of `any`"
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "Multiple routes use `as { session: any }` pattern — inconsistent type assertion throughout codebase",
+          "severity": "important",
+          "recommendation": "Centralize the type assertion in lib/rbac.ts withAuth function"
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "trends/route.ts: Mock data uses placeholder URLs",
+          "severity": "minor",
+          "recommendation": "Add a comment indicating this is mock/placeholder data for production replacement"
+        }
+      ],
+      "recommendation": "FAIL",
+      "blocked_issues_fixed": [
+        "/api/trends endpoint MISSING → VERIFIED FIXED: route.ts created with full Zod validation and auth",
+        "Zod validation NOT FOUND → VERIFIED FIXED: 9 routes have Zod schemas (TrendsQuerySchema, ResearchPostSchema, ProjectCreateSchema, ProjectBulkPatchSchema, SessionsQuerySchema, RegisterSchema, etc.)",
+        "Hardcoded AUTH_SECRET → VERIFIED FIXED: .env now uses AUTH_SECRET=\"w7uBvLR828WfUQx9qTyNFGo4QxkGfEqPZ2p3kGmFTek=\"",
+        "Auth route corrupted → VERIFIED FIXED: auth/[...nextauth]/route.ts is clean with proper GET/POST handler"
+      ],
+      "new_issues": [
+        "PrismaAdapter cast to `any` in lib/auth.ts (critical)",
+        "Multiple `session: any` type leaks in research, projects, sessions routes",
+        "Search cache data typed as `any` in research/route.ts",
+        "Inconsistent type assertion patterns across routes"
+      ]
+    },
+    {
+      "model": "Gemini 2.5",
+      "timestamp": "2026-04-04 04:10 UTC",
+      "reviewer": "CISO",
+      "score": 77,
+      "dimension_scores": {
+        "security": { "raw": 6 },
+        "spec_compliance": { "raw": 8 },
+        "code_quality": { "raw": 8 }
+      },
+      "findings": [
+        {
+          "dimension": "security",
+          "issue": "next.config.ts missing ALL security headers (OWASP A05/A07) — CSP, X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy",
+          "severity": "critical",
+          "recommendation": "Add securityHeaders to next.config.ts per Technical Spec §7.3"
+        },
+        {
+          "dimension": "security",
+          "issue": "eslint: { ignoreDuringBuilds: true } allows TypeScript errors to pass into production builds",
+          "severity": "critical",
+          "recommendation": "Set ignoreDuringBuilds: false or remove the eslint config block"
+        },
+        {
+          "dimension": "spec_compliance",
+          "issue": "CTO claimed Zod added to 8 API routes — ACTUAL: only 9/13 routes have Zod. 4 routes (agents, sse, system, threads) have NONE",
+          "severity": "important",
+          "recommendation": "Add Zod schemas to: /api/agents, /api/sse, /api/system, /api/threads"
+        },
+        {
+          "dimension": "security",
+          "issue": "No rate limiting on any API endpoint (OWASP A04)",
+          "severity": "important",
+          "recommendation": "Add rate limiting middleware for public/auth endpoints, especially /api/auth/register"
+        },
+        {
+          "dimension": "spec_compliance",
+          "issue": "MVP pages not verified — only API routes were reviewed. Cannot confirm dashboard/projects/research pages are deployed",
+          "severity": "important",
+          "recommendation": "CDO should provide screenshot evidence of deployed MVP pages"
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "/api/system uses 'any' type in activity map callback",
+          "severity": "minor",
+          "recommendation": "Replace 'any' with proper interfaces from @/lib/openclaw types"
+        },
+        {
+          "dimension": "code_quality",
+          "issue": "SSE route silently swallows errors in setInterval: 'catch {}' without logging",
+          "severity": "minor",
+          "recommendation": "Add error logging in SSE interval handlers"
+        }
+      ],
+      "recommendation": "BORDERLINE",
+      "blocked_issues_fixed": [
+        "/api/trends endpoint created with GET handler and Zod validation",
+        "AUTH_SECRET replaced with proper 32-byte base64 secret",
+        "Auth route /api/auth/[...nextauth]/route.ts is clean — no corruption"
+      ],
+      "new_issues": [
+        "Security headers completely missing from next.config.ts (critical)",
+        "ESLint ignoreDuringBuilds: true allows TypeScript errors into production (critical)",
+        "Only 9/13 routes have Zod (not 8 as CTO claimed) — agents, sse, system, threads lack validation",
+        "No rate limiting anywhere in the API layer (important)"
+      ]
+    }
+  ],
+  "gate_verdict": "BLOCKED",
+  "summary": {
+    "gpt41_score": 90,
+    "gemini_score": 77,
+    "claude_score": 83,
+    "average_score": 83.33,
+    "pass_count": 1,
+    "borderline_count": 1,
+    "fail_count": 1,
+    "previous_mr_blocked_issues_fixed": 4,
+    "new_critical_issues_found": 3
+  },
+  "blocking_issues": [
+    {
+      "model": "Claude",
+      "issue": "PrismaAdapter(db) cast to `any` in lib/auth.ts",
+      "severity": "critical",
+      "must_fix": true
+    },
+    {
+      "model": "Gemini 2.5",
+      "issue": "Security headers missing from next.config.ts (CSP, X-Frame-Options, HSTS, etc.)",
+      "severity": "critical",
+      "must_fix": true
+    },
+    {
+      "model": "Gemini 2.5",
+      "issue": "ESLint ignoreDuringBuilds: true allows TypeScript errors into production",
+      "severity": "critical",
+      "must_fix": true
+    },
+    {
+      "model": "Gemini 2.5",
+      "issue": "Only 9/13 API routes have Zod validation — agents, sse, system, threads routes lack validation",
+      "severity": "important",
+      "must_fix": true
+    }
+  ],
+  "ciso_safe_to_deploy": false,
+  "ciso_rationale": "MR-2 still blocked. While all 4 original critical issues were fixed by CTO, 3 NEW critical issues emerged: (1) PrismaAdapter any-cast in lib/auth.ts, (2) missing security headers in next.config.ts, (3) ESLint ignoreDuringBuilds:true. Plus 4 more important issues including incomplete Zod coverage and no rate limiting.",
+  "next_steps": [
+    "CTO must fix 3 critical issues before MR-2 can pass",
+    "CTO must add Zod schemas to remaining 4 routes (agents, sse, system, threads)",
+    "CTO should consider adding rate limiting as important enhancement",
+    "Re-run MR-2 after all fixes applied — all 3 models must score ≥90 to pass gate"
+  ],
+  "signature": "FABIO_CISO_SIGNED_2026-04-04_0410_UTC"
+}

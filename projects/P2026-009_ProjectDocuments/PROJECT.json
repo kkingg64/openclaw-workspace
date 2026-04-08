@@ -1,0 +1,31 @@
+{
+  "projectId": "P2026-009",
+  "name": "MADHORSE Game Arena",
+  "codeName": "GameArena",
+  "phase": "0",
+  "status": "REGISTERED",
+  "owner": "CEO",
+  "codePath": "projects/P2026-009_GameArena",
+  "docsPath": "projects/P2026-009_ProjectDocuments",
+  "deployTargets": [
+    {
+      "type": "docker",
+      "state": "planned",
+      "publicUrl": null,
+      "internalUrl": "http://76.13.215.13:8090"
+    }
+  ],
+  "stack": ["Next.js 14+", "Three.js / React Three Fiber", "TypeScript", "Tailwind CSS", "WebSocket"],
+  "okrs": [
+    {
+      "objective": "Build world-class 2D/3D browser game",
+      "keyResult": "Playable demo with 60fps on mid-range device",
+      "target": "60fps @ 1080p"
+    }
+  ],
+  "currentGate": "[BOSS_APPROVED]",
+  "createdAt": "2026-04-01 14:00 HKT",
+  "updatedAt": "2026-04-01 14:00 HKT",
+  "lastVerifiedAt": null,
+  "notes": ["Boss requested 2D/3D game project"]
+}

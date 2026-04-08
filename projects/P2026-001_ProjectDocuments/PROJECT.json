@@ -1,0 +1,31 @@
+{
+  "id": "P2026-001",
+  "name": "Dashboard",
+  "description": "MADHORSE Ltd. Command Center - Strategic Command Dashboard",
+  "status": "BAU",
+  "currentVersion": "v1.2",
+  "created": "2026-03-06",
+  "lastUpdated": "2026-03-07",
+  "liveUrl": "https://opanclaw-dashboard.vercel.app",
+  "github": "kkingg64/opanclaw_dashboard",
+  "platform": "Vercel",
+  "framework": "Next.js 14",
+  "owner": "CEO",
+  "lead": "CTO",
+  "phases": {
+    "phase0": "2026-03-06",
+    "phase1": "2026-03-06",
+    "phase2": "2026-03-06",
+    "phase3": "2026-03-06",
+    "phase4": "2026-03-06",
+    "phase45": "2026-03-06",
+    "phase5": "2026-03-06"
+  },
+  "enhancements": [
+    {"id": "ENH001", "name": "Agent Status Panel", "status": "done"},
+    {"id": "ENH002", "name": "Active Tasks Panel", "status": "done"},
+    {"id": "ENH003", "name": "System Time Fix", "status": "done"},
+    {"id": "ENH004", "name": "Progress Bars", "status": "done"},
+    {"id": "ENH005", "name": "UI Enhancement", "status": "done"}
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "copilot_reviewer",
+  "description": "Call GPT-4.1 (default) or o4-mini (security) via GitHub Models for independent review. Use alongside gemini_advisor for multi-model gates. review_type='strategy' uses gpt-4.1 for business analysis. review_type='security_review' auto-selects o4-mini (reasoning model). Use for: (1) Phase 1.5 business/security advisory, (2) Phase 2 design feasibility, (3) Phase 4 code quality, (4) Phase 5 UAT compliance.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "problem": {
+        "type": "string",
+        "description": "What to review — e.g. 'Phase 1.5 business strategy for P2026-003', 'Phase 4 code quality for P2026-002'"
+      },
+      "context": {
+        "type": "string",
+        "description": "Code snippets, specs, documents, or file contents to review"
+      },
+      "review_type": {
+        "type": "string",
+        "description": "Type of review: 'strategy' (gpt-4.1, business) | 'design_review' (gpt-4.1) | 'code_review' (gpt-4.1) | 'uat_review' (gpt-4.1) | 'security_review' (o4-mini, reasoning) (default: 'code_review')"
+      },
+      "focus": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Specific areas to focus on, e.g. ['anti-patterns', 'test coverage', 'TypeScript safety']"
+      },
+      "model": {
+        "type": "string",
+        "description": "Override model: 'gpt-4.1' (default, best general), 'o4-mini' (reasoning, best for security/logic). Auto-selected if not specified."
+      }
+    },
+    "required": ["problem", "context", "review_type"]
+  }
+}

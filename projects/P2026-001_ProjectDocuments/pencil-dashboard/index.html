@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard MADHORSE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg: #0F3460;
+            --card: #16213E;
+            --header-sidebar: #1A1A2E;
+            --accent: #E94560;
+            --success: #00B894;
+            --error: #FF6B6B;
+            --warning: #FDCB6E;
+            --text: #FFFFFF;
+            --text-muted: #A8A8B3;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+            background: var(--header-sidebar);
+            padding: 0 24px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .nav {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .nav a {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .nav a:hover,
+        .nav a.active {
+            color: var(--accent);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+        
+        /* Layout */
+        .layout {
+            display: flex;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--header-sidebar);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-height: calc(100vh - 72px);
+        }
+        
+        .sidebar-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .nav-item.active {
+            background: var(--accent);
+        }
+        
+        .nav-item:not(.active):hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .nav-item.active .nav-item-icon {
+            background: var(--text);
+        }
+        
+        .nav-item:not(.active) .nav-item-icon {
+            background: var(--text-muted);
+        }
+        
+        .nav-item-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .nav-item.active .nav-item-text {
+            color: var(--text);
+        }
+        
+        .nav-item:not(.active) .nav-item-text {
+            color: var(--text-muted);
+        }
+        
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        /* Stats Cards */
+        .stats-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-card {
+            flex: 1;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-badge {
+            display: inline-flex;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            width: fit-content;
+        }
+        
+        .stat-badge.up {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--success);
+        }
+        
+        .stat-badge.down {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--error);
+        }
+        
+        /* Chart Section */
+        .chart-section {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .chart-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 200px;
+            padding: 16px;
+        }
+        
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .bar {
+            width: 60px;
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        
+        .bar-label {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        /* Table Section */
+        .table-section {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .table-header {
+            display: flex;
+            background: var(--header-sidebar);
+            border-radius: 8px;
+            padding: 12px 16px;
+            gap: 16px;
+        }
+        
+        .table-header-cell {
+            flex: 1;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        
+        .table-row {
+            display: flex;
+            padding: 12px 16px;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .table-cell {
+            flex: 1;
+            font-size: 13px;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            width: fit-content;
+        }
+        
+        .status-badge.completed {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--success);
+        }
+        
+        .status-badge.pending {
+            background: rgba(253, 203, 110, 0.2);
+            color: var(--warning);
+        }
+        
+        .status-badge.cancelled {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--error);
+        }
+        
+        /* Buttons */
+        .btn-section {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: var(--text);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">M</div>
+            <span class="logo-text">MADHORSE</span>
+        </div>
+        <nav class="nav">
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">Analytics</a>
+            <a href="#">Orders</a>
+            <a href="#">Settings</a>
+        </nav>
+        <div class="avatar"></div>
+    </header>
+    
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Menu</div>
+            <div class="nav-item active">
+                <div class="nav-item-icon"></div>
+                <span class="nav-item-text">Dashboard</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-item-icon"></div>
+                <span class="nav-item-text">Orders</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-item-icon"></div>
+                <span class="nav-item-text">Products</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-item-icon"></div>
+                <span class="nav-item-text">Customers</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-item-icon"></div>
+                <span class="nav-item-text">Reports</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-item-icon"></div>
+                <span class="nav-item-text">Settings</span>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Stats Cards -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <span class="stat-label">Total Revenue</span>
+                    <span class="stat-value">$124,580</span>
+                    <span class="stat-badge up">+12.5%</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Total Orders</span>
+                    <span class="stat-value">2,847</span>
+                    <span class="stat-badge up">+8.2%</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Avg. Order Value</span>
+                    <span class="stat-value">$43.76</span>
+                    <span class="stat-badge down">-2.1%</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Active Customers</span>
+                    <span class="stat-value">1,429</span>
+                    <span class="stat-badge up">+15.3%</span>
+                </div>
+            </div>
+            
+            <!-- Chart -->
+            <div class="chart-section">
+                <h2 class="chart-title">Revenue Overview</h2>
+                <div class="chart-area">
+                    <div class="bar-group">
+                        <div class="bar" style="height: 120px;"></div>
+                        <span class="bar-label">Jan</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 160px;"></div>
+                        <span class="bar-label">Feb</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 200px;"></div>
+                        <span class="bar-label">Mar</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 180px;"></div>
+                        <span class="bar-label">Apr</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Table -->
+            <div class="table-section">
+                <h2 class="table-title">Recent Orders</h2>
+                <div class="table-header">
+                    <span class="table-header-cell">Order ID</span>
+                    <span class="table-header-cell">Customer</span>
+                    <span class="table-header-cell">Amount</span>
+                    <span class="table-header-cell">Status</span>
+                </div>
+                <div class="table-row">
+                    <span class="table-cell">#ORD-001</span>
+                    <span class="table-cell">Alice Wong</span>
+                    <span class="table-cell">$234.00</span>
+                    <span class="status-badge completed">Completed</span>
+                </div>
+                <div class="table-row">
+                    <span class="table-cell">#ORD-002</span>
+                    <span class="table-cell">Bob Chen</span>
+                    <span class="table-cell">$156.00</span>
+                    <span class="status-badge completed">Completed</span>
+                </div>
+                <div class="table-row">
+                    <span class="table-cell">#ORD-003</span>
+                    <span class="table-cell">Carol Lee</span>
+                    <span class="table-cell">$89.00</span>
+                    <span class="status-badge pending">Pending</span>
+                </div>
+                <div class="table-row">
+                    <span class="table-cell">#ORD-004</span>
+                    <span class="table-cell">David Kim</span>
+                    <span class="table-cell">$312.00</span>
+                    <span class="status-badge cancelled">Cancelled</span>
+                </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="btn-section">
+                <button class="btn btn-primary">Export Report</button>
+                <button class="btn btn-secondary">View All</button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

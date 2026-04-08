@@ -1,0 +1,30 @@
+{
+  "projectId": "P2026-008",
+  "name": "MADHORSE HQ",
+  "description": "Enterprise Mission Control Dashboard - Real-time Company Intelligence Platform",
+  "phase": "Phase 6 (BAU)",
+  "status": "ACTIVE",
+  "owner": "CEO",
+  "codePath": "projects/P2026-008_MADHORSE_HQ/",
+  "docsPath": "projects/P2026-008_ProjectDocuments/",
+  "created": "2026-04-01",
+  "bossApproval": "APPROVED",
+  "phaseHistory": [
+    { "phase": "Phase 0", "date": "2026-04-01", "action": "Registered by CEO" },
+    { "phase": "Phase 3", "date": "2026-04-01", "action": "CTO Technical Spec signed" },
+    { "phase": "Phase 4", "date": "2026-04-01", "action": "CEO Sprint 0 confirmed" },
+    { "phase": "Phase 2", "date": "2026-04-02", "action": "ROLLBACK: Build failed, Phase 2 design incomplete" },
+    { "phase": "Phase 2", "date": "2026-04-03", "action": "ROLLBACK: SOP v11.6 adopted, design restart from beginning" },
+    { "phase": "Phase 3", "date": "2026-04-03", "action": "Phase 3 Technical Spec signed" },
+    { "phase": "Phase 4", "date": "2026-04-03", "action": "RESTART: Process not followed correctly - need protocol steps" },
+    { "phase": "Phase 4", "date": "2026-04-03", "action": "RESTART: Boss wants systematic protocol execution" },
+    { "phase": "Phase 5", "date": "2026-04-03", "action": "UAT PASS - All criteria met" },
+    { "phase": "Phase 6 (BAU)", "date": "2026-04-04", "action": "CEO final sign-off - BAU active" }
+  ],
+  "vision": {
+    "summary": "Enterprise Mission Control Dashboard - Real-time Company Intelligence Platform",
+    "target": "CEO + Internal Stakeholders",
+    "style": "Stripe Dashboard - Modern, Elegant, Enterprise Grade",
+    "mode": "Dark Mode (MADHORSE tokens)"
+  }
+}

@@ -1,0 +1,292 @@
+{
+  "name": "P005 AI Butler - Green API Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "greenapi",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "GreenAPI Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "p005-greenapi"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract phone and message from Green API payload\nconst body = $input.item.json;\n\n// Green API webhook format:\n// {\n//   \"typeWebhook\": \"incomingMessageReceived\",\n//   \"instanceData\": { \"idInstance\": \"...\" },\n//   \"timestamp\": 1234567890,\n//   \"body\": {\n//     \"idMessage\": \"...\",\n//     \"senderData\": { \"chatId\": \"85212345678@c.us\" },\n//     \"messageData\": { \"textMessageData\": { \"textMessage\": \"Hello\" } }\n//   }\n// }\n\nlet phone = '';\nlet message = '';\nlet messageId = '';\n\nif (body.body) {\n  const msgData = body.body;\n  messageId = msgData.idMessage || '';\n  \n  if (msgData.senderData && msgData.senderData.chatId) {\n    // Remove @c.us or @g.us suffix\n    phone = msgData.senderData.chatId.replace('@c.us', '').replace('@g.us', '');\n  }\n  \n  if (msgData.messageData) {\n    // Text message\n    if (msgData.messageData.textMessageData) {\n      message = msgData.messageData.textMessageData.textMessage || '';\n    }\n    // Image with caption\n    else if (msgData.messageData.extendedTextMessageData) {\n      message = '[圖片] ' + (msgData.messageData.extendedTextMessageData.caption || '');\n    }\n    // Document\n    else if (msgData.messageData.documentMessageData) {\n      message = '[文件] ' + (msgData.messageData.documentMessageData.fileName || '');\n    }\n    // Video\n    else if (msgData.messageData.videoMessageData) {\n      message = '[影片]';\n    }\n    // Audio/Voice\n    else if (msgData.messageData.audioMessageData) {\n      message = '[語音訊息]';\n    }\n    else {\n      message = '[不支援的訊息類型]';\n    }\n  }\n}\n\n// Only process incoming messages (not outgoing/acks)\nconst typeWebhook = body.typeWebhook || '';\nif (typeWebhook !== 'incomingMessageReceived') {\n  // Skip ack/notifications\n  return null;\n}\n\nreturn {\n  phone,\n  message,\n  messageId,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "extract-data",
+      "name": "Extract Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM p005_users WHERE whatsapp_phone = $1 LIMIT 1",
+        "options": {
+          "retry": {
+            "enabled": true,
+            "maxRetry": 3
+          }
+        }
+      },
+      "id": "get-user",
+      "name": "Get User",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1.1,
+      "position": [650, 300],
+      "credentials": {
+        "postgres": "fabio-db"
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build AI request payload\nconst user = $input.item.json.user;\nconst message = $input.item.json.message;\nconst phone = $input.item.json.phone;\n\nconst userContext = user ? {\n  name: user.whatsapp_name || '會員',\n  rank: user.rank || 'pioneer',\n  amway_id: user.amway_id || '未綁定'\n} : {\n  name: '新會員',\n  rank: 'pioneer',\n  amway_id: '未綁定'\n};\n\nconst systemPrompt = `你係 AI 智能大管家，專門為 Amway 直銷商提供服務。\n\n用戶資料：\n- 名字: ${userContext.name}\n- 職級: ${userContext.rank}\n- Amway ID: ${userContext.amway_id}\n\n權限範圍：\n${userContext.rank === 'founders' ? '- 全部權限（包括團隊數據）' : ''}\n${userContext.rank === 'platinum' || userContext.rank === 'founders' ? '- 獎金計算' : ''}\n- 產品查詢\n- 訂單管理\n\n重要規則：\n1. 只能用廣東話回覆（除非用戶要求英文）\n2. 產品價格同 PV 要精確\n3. 獎金計算要清楚解釋\n4. 引用既文件要標明來源\n5. 如果用戶詢問超過權限既資訊，要禮貌咁拒絕\n6. 保持自然、親切既對話風格\n7. 不知道既野就話唔清楚，唔好亂講\n\n你既知識庫包括：\n- Amway 產品資訊（營養保健品、護膚品、個人護理）\n- 獎金制度\n- 訂單流程\n- 常見問題FAQ\n\n現在用戶既問題：${message}`;\n\nreturn {\n  phone,\n  message,\n  user_id: user?.id || null,\n  systemPrompt,\n  messageId: $input.item.json.messageId\n};"
+      },
+      "id": "build-prompt",
+      "name": "Build AI Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://gateway:18789/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "MiniMax-M2.5"
+            },
+            {
+              "name": "messages",
+              "value": "={{ { role: 'system', content: $json.systemPrompt } }}"
+            },
+            {
+              "name": "temperature",
+              "value": 0.7
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "call-openclaw",
+      "name": "Call OpenClaw AI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 300],
+      "credentials": {
+        "httpHeaderAuth": "minimax-api"
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract AI response\nconst aiResponse = $input.item.json.choices?.[0]?.message?.content || '抱歉，請稍後再試。';\n\nreturn {\n  response: aiResponse,\n  phone: $input.item.json.phone,\n  messageId: $input.item.json.messageId\n};"
+      },
+      "id": "extract-response",
+      "name": "Extract AI Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format Green API message payload\nconst response = $input.item.json.response;\nconst phone = $input.item.json.phone;\n\n// Green API requires chatId format: 85212345678@c.us\nconst chatId = phone + '@c.us';\n\nreturn {\n  chatId,\n  message: response\n};"
+      },
+      "id": "format-greenapi",
+      "name": "Format GreenAPI Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.green-api.com/waInstance{{$credentials.greenapi.idInstance}}/sendMessage/{{$credentials.greenapi.apiToken}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chatId",
+              "value": "={{ $json.chatId }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $json.message }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-greenapi",
+      "name": "Send via GreenAPI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1650, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "p005_conversations",
+        "columns": "user_id, wa_message_id, direction, message_type, content, ai_response",
+        "values": "={{ [($input.item.json.user_id || null), ($input.item.json.messageId || null), 'inbound', 'text', $input.item.json.message, true] }}",
+        "options": {}
+      },
+      "id": "log-conversation",
+      "name": "Log to Database",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1.1,
+      "position": [1850, 300],
+      "credentials": {
+        "postgres": "fabio-db"
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Return success response\nreturn {\n  success: true,\n  message: 'Response sent successfully'\n};"
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2050, 300]
+    }
+  ],
+  "connections": {
+    "GreenAPI Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Data": {
+      "main": [
+        [
+          {
+            "node": "Get User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get User": {
+      "main": [
+        [
+          {
+            "node": "Build AI Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build AI Prompt": {
+      "main": [
+        [
+          {
+            "node": "Call OpenClaw AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call OpenClaw AI": {
+      "main": [
+        [
+          {
+            "node": "Extract AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract AI Response": {
+      "main": [
+        [
+          {
+            "node": "Format GreenAPI Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format GreenAPI Request": {
+      "main": [
+        [
+          {
+            "node": "Send via GreenAPI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via GreenAPI": {
+      "main": [
+        [
+          {
+            "node": "Log to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Database": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-03-11T07:45:00.000Z",
+  "versionId": "1"
+}

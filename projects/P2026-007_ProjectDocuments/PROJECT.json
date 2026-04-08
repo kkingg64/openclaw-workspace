@@ -1,0 +1,15 @@
+{
+  "projectId": "P2026-007",
+  "name": "ViralShorts",
+  "description": "AI 驅動短影片選題、腳本、發佈流水線",
+  "phase": "Phase 0",
+  "status": "REGISTERED",
+  "owner": "CEO",
+  "codePath": "projects/P2026-007_ViralShorts/",
+  "docsPath": "projects/P2026-007_ProjectDocuments/",
+  "created": "2026-03-30",
+  "bossApproval": "PENDING",
+  "phaseHistory": [
+    { "phase": "Phase 0", "date": "2026-03-30", "action": "Registered by CEO" }
+  ]
+}

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MADHORSE HQ - Theme Preview (Dark)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: 225 37% 6%;
+      --foreground: 0 0% 98%;
+      --card: 225 37% 11%;
+      --card-foreground: 0 0% 98%;
+      --popover: 225 37% 6%;
+      --popover-foreground: 0 0% 98%;
+      --muted: 225 37% 18%;
+      --muted-foreground: 215 20% 65%;
+      --accent: 0 84% 60%;
+      --accent-foreground: 225 37% 8%;
+      --destructive: 0 84% 60%;
+      --destructive-foreground: 225 37% 8%;
+      --border: 225 37% 18%;
+      --input: 225 37% 18%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 225 37% 8%;
+      --secondary: 225 37% 18%;
+      --secondary-foreground: 0 0% 98%;
+      --ring: 0 84% 60%;
+      --radius: 0.5rem;
+      --success: 142 76% 36%;
+      --warning: 38 92% 50%;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: hsl(var(--background));
+      color: hsl(var(--foreground));
+      line-height: 1.5;
+      padding: 24px;
+    }
+    .container { max-width: 1440px; margin: 0 auto; }
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px; background: hsl(var(--card));
+      border: 1px solid hsl(var(--border)); border-radius: var(--radius);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    @media (max-width: 640px) {
+      .header { padding: 12px 16px; }
+      .header-right { gap: 8px; }
+      .avatar { width: 32px; height: 32px; font-size: 12px; }
+    }
+    .nav-tabs { display: flex; gap: 4px; background: hsl(var(--muted)); padding: 4px; border-radius: var(--radius); }
+    .nav-tab { padding: 8px 16px; font-size: 14px; font-weight: 500; border-radius: calc(var(--radius) - 2px); cursor: pointer; border: none; background: transparent; color: hsl(var(--muted-foreground)); transition: all 150ms; }
+    .nav-tab:hover { color: hsl(var(--foreground)); }
+    .nav-tab.active { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+    /* Hamburger */
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: hsl(var(--foreground)); }
+    .hamburger svg { width: 24px; height: 24px; }
+    /* Mobile menu overlay */
+    .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: hsl(var(--background) / 0.95); z-index: 1000; flex-direction: column; padding: 24px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    .mobile-nav { display: flex; flex-direction: column; gap: 8px; }
+    .mobile-nav .nav-tab { padding: 16px; font-size: 18px; text-align: left; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); }
+    .mobile-nav .nav-tab.active { background: hsl(var(--accent)); }
+    @media (max-width: 767px) {
+      .nav-tabs { display: none; }
+      .hamburger { display: block; }
+      #desktop-search { display: none; }
+    }
+    .section { margin-bottom: 48px; }
+    .section-title { font-size: 24px; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid hsl(var(--border)); }
+    .subsection-title { font-size: 14px; font-weight: 500; color: hsl(var(--muted-foreground)); margin: 24px 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; }
+    .card { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) + 4px); padding: 16px; }
+    .card:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; font-size: 14px; font-weight: 500; border-radius: var(--radius); border: none; cursor: pointer; transition: all 150ms; }
+    .btn-primary { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { background: hsl(var(--secondary)); color: hsl(var(--secondary-foreground)); }
+    .btn-accent { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+    .btn-destructive { background: hsl(var(--destructive)); color: hsl(var(--destructive-foreground)); }
+    .badge { display: inline-flex; align-items: center; padding: 4px 8px; font-size: 12px; font-weight: 500; border-radius: 9999px; }
+    .badge-default { background: hsl(var(--secondary)); color: hsl(var(--secondary-foreground)); }
+    .badge-accent { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+    .badge-success { background: hsl(var(--success)); color: hsl(0 0% 100%); }
+    .badge-destructive { background: hsl(var(--destructive)); color: hsl(var(--destructive-foreground)); }
+    .input { width: 100%; padding: 10px 14px; font-size: 14px; background: hsl(var(--background)); border: 1px solid hsl(var(--input)); border-radius: var(--radius); color: hsl(var(--foreground)); transition: all 150ms; }
+    .input:focus { outline: none; border-color: hsl(var(--ring)); box-shadow: 0 0 0 2px hsl(var(--ring) / 0.3); }
+    .progress { width: 100%; height: 8px; background: hsl(var(--muted)); border-radius: 9999px; overflow: hidden; }
+    .progress-bar { height: 100%; background: hsl(var(--accent)); border-radius: 9999px; transition: width 300ms; }
+    .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+    .color-swatch { display: flex; flex-direction: column; gap: 8px; }
+    .color-box { height: 48px; border-radius: var(--radius); border: 1px solid hsl(var(--border)); }
+    .color-name { font-size: 12px; font-weight: 500; }
+    .color-value { font-size: 11px; color: hsl(var(--muted-foreground)); font-family: monospace; }
+    .showcase-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .status-active { background: hsl(var(--success)); }
+    .status-busy { background: hsl(var(--accent)); animation: pulse 1s infinite; }
+    .status-idle { background: hsl(var(--muted-foreground)); }
+    .status-error { background: hsl(var(--destructive)); }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: hsl(var(--muted)); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: hsl(var(--foreground)); }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 1024px) { .metric-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .metric-grid { grid-template-columns: 1fr; } }
+    .metric-card { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) + 4px); padding: 16px; }
+    .metric-label { font-size: 12px; color: hsl(var(--muted-foreground)); text-transform: uppercase; letter-spacing: 0.05em; }
+    .metric-value { font-size: 28px; font-weight: 700; }
+    .agent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 1024px) { .agent-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .agent-grid { grid-template-columns: 1fr; } }
+    .agent-card { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) + 4px); padding: 16px; cursor: pointer; transition: all 150ms; }
+    .agent-card:hover { border-color: hsl(var(--accent)); box-shadow: 0 0 0 1px hsl(var(--accent)); }
+    .agent-avatar { width: 40px; height: 40px; border-radius: 50%; background: hsl(var(--accent)); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+    .project-card { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) + 4px); padding: 16px; cursor: pointer; transition: all 150ms; }
+    .project-card:hover { transform: scale(1.02); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); }
+    .skeleton { background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--muted-foreground)) 50%, hsl(var(--muted)) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .focus-demo { padding: 8px 16px; border-radius: var(--radius); outline: 2px solid transparent; transition: all 150ms; }
+    .focus-demo:focus { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-left">
+        <h1 style="font-size: 20px;">MADHORSE HQ</h1>
+        <div class="nav-tabs">
+          <button class="nav-tab active">System</button>
+          <button class="nav-tab">Agents</button>
+          <button class="nav-tab">Projects</button>
+          <button class="nav-tab">Research</button>
+          <button class="nav-tab">Trends</button>
+        </div>
+      </div>
+      <div class="header-right">
+        <input type="text" class="input" placeholder="Search..." id="desktop-search" style="max-width: 200px;">
+        <div class="avatar">F</div>
+        <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <h1 style="font-size: 20px;">MADHORSE HQ</h1>
+        <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Close menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="mobile-nav">
+        <button class="nav-tab active" onclick="selectTab(this)">System</button>
+        <button class="nav-tab" onclick="selectTab(this)">Agents</button>
+        <button class="nav-tab" onclick="selectTab(this)">Projects</button>
+        <button class="nav-tab" onclick="selectTab(this)">Research</button>
+        <button class="nav-tab" onclick="selectTab(this)">Trends</button>
+      </div>
+      <input type="text" class="input" placeholder="Search..." style="margin-top: 24px;">
+    </div>
+
+    <script>
+      function toggleMobileMenu() {
+        document.getElementById('mobile-menu').classList.toggle('open');
+        document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('open') ? 'hidden' : '';
+      }
+      function selectTab(el) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        toggleMobileMenu();
+      }
+    </script>
+
+    <!-- COLOR TOKENS -->
+    <div class="section">
+      <h2 class="section-title">Design Tokens — madhorse-cdo.json (Dark)</h2>
+      <h3 class="subsection-title">Background & Surface</h3>
+      <div class="color-grid">
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--background));"></div><div class="color-name">--background</div><div class="color-value">225 37% 6%</div></div>
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--card));"></div><div class="color-name">--card</div><div class="color-value">225 37% 11%</div></div>
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--muted));"></div><div class="color-name">--muted</div><div class="color-value">225 37% 18%</div></div>
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--popover));"></div><div class="color-name">--popover</div><div class="color-value">225 37% 6%</div></div>
+      </div>
+      <h3 class="subsection-title">Foreground & Text</h3>
+      <div class="color-grid">
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--foreground));"></div><div class="color-name">--foreground</div><div class="color-value">0 0% 98%</div></div>
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--muted-foreground));"></div><div class="color-name">--muted-foreground</div><div class="color-value">215 20% 65%</div></div>
+      </div>
+      <h3 class="subsection-title">Interactive & Accent</h3>
+      <div class="color-grid">
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--primary)); border: 1px solid hsl(var(--border));"></div><div class="color-name">--primary</div><div class="color-value">0 0% 98%</div></div>
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--secondary));"></div><div class="color-name">--secondary</div><div class="color-value">225 37% 18%</div></div>
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--accent));"></div><div class="color-name">--accent</div><div class="color-value">0 84% 60%</div></div>
+        <div class="color-swatch"><div class="color-box" style="background: hsl(var(--destructive));"></div><div class="color-name">--destructive</div><div class="color-value">0 84% 60%</div></div>
+      </div>
+      <h3 class="subsection-title">Borders & Rings</h3>
+      <div class="color-grid">
+        <div class="color-swatch"><div class="color-box" style="background: transparent; border: 2px solid hsl(var(--border));"></div><div class="color-name">--border</div><div class="color-value">225 37% 18%</div></div>
+        <div class="color-swatch"><div class="color-box" style="background: transparent; border: 2px solid hsl(var(--input));"></div><div class="color-name">--input</div><div class="color-value">225 37% 18%</div></div>
+        <div class="color-swatch"><div class="color-box" style="background: transparent; outline: 2px solid hsl(var(--ring)); outline-offset: 2px;"></div><div class="color-name">--ring</div><div class="color-value">0 84% 60%</div></div>
+      </div>
+    </div>
+
+    <!-- TYPOGRAPHY -->
+    <div class="section">
+      <h2 class="section-title">Typography</h2>
+      <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
+        <h1 style="font-size: 32px; font-weight: 700;">H1 — Page Title (32px / 700)</h1>
+        <h2 style="font-size: 24px; font-weight: 600;">H2 — Section Header (24px / 600)</h2>
+        <h3 style="font-size: 18px; font-weight: 600;">H3 — Card Title (18px / 600)</h3>
+        <p style="font-size: 14px; font-weight: 400;">Body Text — Default paragraph style (14px / 400)</p>
+        <p style="font-size: 12px; font-weight: 500;">Small — Labels and metadata (12px / 500)</p>
+        <p style="font-size: 11px; font-weight: 400; color: hsl(var(--muted-foreground));">Caption — Timestamps (11px / 400)</p>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="section">
+      <h2 class="section-title">Buttons</h2>
+      <div class="card">
+        <div class="showcase-row">
+          <button class="btn btn-primary">Primary</button>
+          <button class="btn btn-secondary">Secondary</button>
+          <button class="btn btn-accent">Accent</button>
+          <button class="btn btn-destructive">Destructive</button>
+        </div>
+        <div class="showcase-row" style="margin-top: 16px;">
+          <button class="btn btn-primary" disabled>Primary Disabled</button>
+          <button class="btn btn-secondary" disabled>Secondary Disabled</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGES -->
+    <div class="section">
+      <h2 class="section-title">Badges</h2>
+      <div class="card">
+        <div class="showcase-row">
+          <span class="badge badge-default">Default</span>
+          <span class="badge badge-accent">Accent</span>
+          <span class="badge badge-success">Active</span>
+          <span class="badge badge-destructive">Error</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- INPUT -->
+    <div class="section">
+      <h2 class="section-title">Input</h2>
+      <div class="card" style="max-width: 400px;">
+        <input type="text" class="input" placeholder="Enter text...">
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="section">
+      <h2 class="section-title">Progress</h2>
+      <div class="card" style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+        <div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span class="small">Normal 42%</span></div><div class="progress"><div class="progress-bar" style="width: 42%;"></div></div></div>
+        <div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span class="small">Warning 78%</span></div><div class="progress"><div class="progress-bar" style="width: 78%; background: hsl(var(--warning));"></div></div></div>
+        <div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span class="small">Critical 95%</span></div><div class="progress"><div class="progress-bar" style="width: 95%;"></div></div></div>
+      </div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="section">
+      <h2 class="section-title">Status Indicators</h2>
+      <div class="card">
+        <div class="showcase-row">
+          <div style="display: flex; align-items: center; gap: 8px;"><span class="status-dot status-active"></span><span class="small">Active</span></div>
+          <div style="display: flex; align-items: center; gap: 8px;"><span class="status-dot status-busy"></span><span class="small">Busy</span></div>
+          <div style="display: flex; align-items: center; gap: 8px;"><span class="status-dot status-idle"></span><span class="small">Idle</span></div>
+          <div style="display: flex; align-items: center; gap: 8px;"><span class="status-dot status-error"></span><span class="small">Error</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="section">
+      <h2 class="section-title">Metric Cards</h2>
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-label">CPU</div>
+          <div class="metric-value">42%</div>
+          <div class="progress" style="margin-top: 8px;"><div class="progress-bar" style="width: 42%;"></div></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">RAM</div>
+          <div class="metric-value">8.2GB</div>
+          <div style="font-size: 11px; color: hsl(var(--muted-foreground));">16GB total</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Storage</div>
+          <div class="metric-value">256GB</div>
+          <div style="font-size: 11px; color: hsl(var(--muted-foreground));">512GB total</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Network</div>
+          <div class="metric-value">125 MB/s</div>
+          <div style="font-size: 11px; color: hsl(var(--muted-foreground));">Inbound</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT CARDS -->
+    <div class="section">
+      <h2 class="section-title">Agent Cards</h2>
+      <div class="agent-grid">
+        <div class="agent-card">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <div class="agent-avatar">F</div>
+            <div><div style="font-weight: 600;">CEO Fabio</div><div style="font-size: 12px; color: hsl(var(--muted-foreground));">Chief Executive</div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px;"><span class="status-dot status-active"></span> Active</div>
+        </div>
+        <div class="agent-card">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <div class="agent-avatar" style="background: hsl(var(--warning));">CT</div>
+            <div><div style="font-weight: 600;">CTO</div><div style="font-size: 12px; color: hsl(var(--muted-foreground));">Chief Technology</div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px;"><span class="status-dot status-busy"></span> Busy</div>
+        </div>
+        <div class="agent-card">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <div class="agent-avatar" style="background: hsl(var(--success));">CO</div>
+            <div><div style="font-weight: 600;">COO</div><div style="font-size: 12px; color: hsl(var(--muted-foreground));">Chief Operations</div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px;"><span class="status-dot status-active"></span> Active</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT CARDS -->
+    <div class="section">
+      <h2 class="section-title">Project Cards</h2>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 600px;">
+        <div class="project-card">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+            <div style="font-weight: 600;">P2026-001 Dashboard</div><span class="badge badge-success">Complete</span>
+          </div>
+          <div style="font-size: 12px; color: hsl(var(--muted-foreground)); margin-bottom: 8px;">Phase: BAU</div>
+          <div class="progress"><div class="progress-bar" style="width: 100%;"></div></div>
+        </div>
+        <div class="project-card">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+            <div style="font-weight: 600;">P2026-008 HQ</div><span class="badge badge-accent">In Progress</span>
+          </div>
+          <div style="font-size: 12px; color: hsl(var(--muted-foreground)); margin-bottom: 8px;">Phase: 2</div>
+          <div class="progress"><div class="progress-bar" style="width: 33%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOCUS STATES -->
+    <div class="section">
+      <h2 class="section-title">Focus States (Keyboard Nav)</h2>
+      <div class="card">
+        <div class="showcase-row">
+          <button class="btn btn-primary focus-demo">Tab to me</button>
+          <input type="text" class="input focus-demo" placeholder="Focus input" style="width: 200px;">
+          <div class="focus-demo" tabindex="0" style="padding: 8px 16px; background: hsl(var(--secondary)); border-radius: var(--radius);">Focus div</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKELETON LOADING -->
+    <div class="section">
+      <h2 class="section-title">Skeleton Loading</h2>
+      <div class="card">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <div class="skeleton" style="width: 40px; height: 40px; border-radius: 50%;"></div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+            <div class="skeleton" style="width: 40%; height: 14px;"></div>
+            <div class="skeleton" style="width: 60%; height: 12px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOKEN TABLE -->
+    <div class="section">
+      <h2 class="section-title">Token Reference Table</h2>
+      <div class="card" style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr style="border-bottom: 1px solid hsl(var(--border));">
+              <th style="text-align: left; padding: 12px; color: hsl(var(--muted-foreground)); font-size: 12px; text-transform: uppercase;">Token</th>
+              <th style="text-align: left; padding: 12px; color: hsl(var(--muted-foreground)); font-size: 12px; text-transform: uppercase;">HSL Value</th>
+              <th style="text-align: left; padding: 12px; color: hsl(var(--muted-foreground)); font-size: 12px; text-transform: uppercase;">Usage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid hsl(var(--border));"><td style="padding: 12px; font-family: monospace;">--background</td><td style="padding: 12px; font-family: monospace; color: hsl(var(--muted-foreground));">225 37% 6%</td><td style="padding: 12px;">Page background</td></tr>
+            <tr style="border-bottom: 1px solid hsl(var(--border));"><td style="padding: 12px; font-family: monospace;">--foreground</td><td style="padding: 12px; font-family: monospace; color: hsl(var(--muted-foreground));">0 0% 98%</td><td style="padding: 12px;">Primary text</td></tr>
+            <tr style="border-bottom: 1px solid hsl(var(--border));"><td style="padding: 12px; font-family: monospace;">--card</td><td style="padding: 12px; font-family: monospace; color: hsl(var(--muted-foreground));">225 37% 11%</td><td style="padding: 12px;">Card backgrounds</td></tr>
+            <tr style="border-bottom: 1px solid hsl(var(--border));"><td style="padding: 12px; font-family: monospace;">--accent</td><td style="padding: 12px; font-family: monospace; color: hsl(var(--muted-foreground));">0 84% 60%</td><td style="padding: 12px;">Accent color (red)</td></tr>
+            <tr><td style="padding: 12px; font-family: monospace;">--radius</td><td style="padding: 12px; font-family: monospace; color: hsl(var(--muted-foreground));">0.5rem</td><td style="padding: 12px;">Border radius</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RESEARCH PAGE SECTION (Curated Display - No Search) -->
+    <div class="section">
+      <h2 class="section-title">Research Page — COO Curated + Social Trends</h2>
+      
+      <!-- COO Research Digest Spotlight -->
+      <div class="subsection-title">COO Research Digest (Spotlight)</div>
+      <div class="card" style="margin-bottom: 24px; border-left: 4px solid hsl(var(--accent));">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+          <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: hsl(var(--accent)); font-weight: 600;">COO Research Digest</div>
+          <div style="font-size: 12px; color: hsl(var(--muted-foreground));">Updated: 2026-04-01 08:36 UTC</div>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Useful Agent Skills / MCP 生態深度分析</h3>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 12px; font-weight: 500; color: hsl(var(--muted-foreground)); margin-bottom: 8px;">Top 3 Insights</div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: hsl(var(--foreground));">
+            <li style="margin-bottom: 8px;"><strong>MCP 係 2026 Q2 必爭標準</strong> — 大廠全部採用 (Anthropic/Microsoft/Google/OpenAI/Salesforce)</li>
+            <li style="margin-bottom: 8px;"><strong>高度場景化 Skills 變現效率最高</strong> — 成功 Skills 共同點：解決特定問題、低設置成本、即時價值</li>
+            <li><strong>Skills 變現路徑清晰</strong> — OpenClaw Marketplace 係首發站 (500+ Skills、50K+ 月下載)</li>
+          </ul>
+        </div>
+        
+        <div>
+          <div style="font-size: 12px; font-weight: 500; color: hsl(var(--muted-foreground)); margin-bottom: 8px;">Recommended Actions</div>
+          <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 1px solid hsl(var(--border));">
+                <th style="text-align: left; padding: 8px; color: hsl(var(--muted-foreground)); font-size: 11px;">Priority</th>
+                <th style="text-align: left; padding: 8px; color: hsl(var(--muted-foreground)); font-size: 11px;">Action</th>
+                <th style="text-align: left; padding: 8px; color: hsl(var(--muted-foreground)); font-size: 11px;">Expected Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid hsl(var(--border));">
+                <td style="padding: 8px;"><span class="badge badge-accent">P0</span></td>
+                <td style="padding: 8px;">發布第一個 Skill 到 OpenClaw Marketplace</td>
+                <td style="padding: 8px; color: hsl(var(--muted-foreground));">市場驗證 + 被動收入</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px;"><span class="badge badge-accent">P0</span></td>
+                <td style="padding: 8px;">選擇 1 個高度場景化的垂直 niche</td>
+                <td style="padding: 8px; color: hsl(var(--muted-foreground));">避免「萬能工具」陷阱</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Social Media Hot Topics -->
+      <div class="subsection-title">Social Media Hot Topics</div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+        <!-- YouTube -->
+        <div class="card">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="hsl(var(--foreground))"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            <span style="font-weight: 600; font-size: 14px;">YouTube</span>
+          </div>
+          <div style="font-size: 13px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">1.</span><span>AI Startup Tools 2026</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">2.</span><span>MCP Protocol Tutorial</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">3.</span><span>Agent Skills Showcase</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">4.</span><span>No-Code AI Automation</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: hsl(var(--accent)); font-weight: 600;">5.</span><span>Productivity Hacks 2026</span></div>
+          </div>
+        </div>
+        
+        <!-- Reddit -->
+        <div class="card">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="hsl(var(--foreground))"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 12.5c0-.5-.4-1-1-1-.6 0-1 .5-1 1s.4 1 1 1c.6 0 1-.5 1-1zm-6 0c0-.5-.4-1-1-1-.6 0-1 .5-1 1s.4 1 1 1c.6 0 1-.5 1-1zm2 4c2.8 0 5-1.3 5-3h-2c0 1.1-1.8 2-3 2s-3-.9-3-2H7c0 1.7 2.2 3 5 3z"/></svg>
+            <span style="font-weight: 600; font-size: 14px;">Reddit</span>
+          </div>
+          <div style="font-size: 13px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">1.</span><span>r/LocalLLaMA</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">2.</span><span>MCP Server Registry</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">3.</span><span>AI Agent Monetization</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">4.</span><span>OpenSource AI Tools</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: hsl(var(--accent)); font-weight: 600;">5.</span><span>Startup Journey 2026</span></div>
+          </div>
+        </div>
+        
+        <!-- Twitter -->
+        <div class="card">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="hsl(var(--foreground))"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span style="font-weight: 600; font-size: 14px;">Twitter</span>
+          </div>
+          <div style="font-size: 13px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">1.</span><span>#MCPProtocol</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">2.</span><span>#AIAgents</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">3.</span><span>#OpenClaw</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">4.</span><span>#AgentSkills</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: hsl(var(--accent)); font-weight: 600;">5.</span><span>#StartupTools</span></div>
+          </div>
+        </div>
+        
+        <!-- HackerNews -->
+        <div class="card">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="hsl(var(--foreground))"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 1c4.963 0 9 4.037 9 9s-4.037 9-9 9-9-4.037-9-9 4.037-9 9-9zm-2.5 4.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5S12.33 9 11.5 9 10 8.33 10 7.5l-1 0 0 1z"/></svg>
+            <span style="font-weight: 600; font-size: 14px;">HackerNews</span>
+          </div>
+          <div style="font-size: 13px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">1.</span><span>MCP Standard Proposal</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">2.</span><span>Local AI Runtime</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">3.</span><span>Agent Architecture</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid hsl(var(--border));"><span style="color: hsl(var(--accent)); font-weight: 600;">4.</span><span>OpenSource Ecosystems</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;"><span style="color: hsl(var(--accent)); font-weight: 600;">5.</span><span>Developer Tools 2026</span></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recent Research Files -->
+      <div class="subsection-title">Recent Research Files</div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+        <div class="card" style="cursor: pointer;">
+          <div style="font-size: 11px; color: hsl(var(--accent)); margin-bottom: 4px;">📄 md</div>
+          <div style="font-weight: 500; font-size: 14px; margin-bottom: 8px;">AI_Agent_Tools_Research.md</div>
+          <div style="font-size: 12px; color: hsl(var(--muted-foreground));">Modified: 2026-04-01</div>
+        </div>
+        <div class="card" style="cursor: pointer;">
+          <div style="font-size: 11px; color: hsl(var(--accent)); margin-bottom: 4px;">📄 md</div>
+          <div style="font-weight: 500; font-size: 14px; margin-bottom: 8px;">IDEAS_2026-04-01_08.md</div>
+          <div style="font-size: 12px; color: hsl(var(--muted-foreground));">Modified: 2026-04-01</div>
+        </div>
+        <div class="card" style="cursor: pointer;">
+          <div style="font-size: 11px; color: hsl(var(--accent)); margin-bottom: 4px;">📄 md</div>
+          <div style="font-weight: 500; font-size: 14px; margin-bottom: 8px;">shadcn-ui-radix-ui-research.md</div>
+          <div style="font-size: 12px; color: hsl(var(--muted-foreground));">Modified: 2026-04-01</div>
+        </div>
+        <div class="card" style="cursor: pointer;">
+          <div style="font-size: 11px; color: hsl(var(--accent)); margin-bottom: 4px;">📄 md</div>
+          <div style="font-weight: 500; font-size: 14px; margin-bottom: 8px;">WorldClassDesignSystems_Research.md</div>
+          <div style="font-size: 12px; color: hsl(var(--muted-foreground));">Modified: 2026-04-01</div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 16px; padding: 12px; background: hsl(var(--muted)); border-radius: var(--radius); font-size: 13px; color: hsl(var(--muted-foreground)); text-align: center;">
+        🔍 Note: No search input on this page. Content is curated by COO. Use header global search for specific research.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
